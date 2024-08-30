@@ -1,0 +1,24 @@
+[package]
+name = "wdotool"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "wdotool"
+crate-type = ["cdylib"]
+path="src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.86"
+bitflags = "2.6.0"
+libc = "0.2.158"
+log = "0.4.22"
+ndarray = "0.15.6"
+numpy = "0.21"
+pyo3 = { version = "0.21.0", features = ["anyhow", "extension-module"] }
+pyo3-log = "0.11.0"
+rand = "0.8.5"
+rand_distr = "0.4.3"
+wayland-backend = "0.3.6"
+wayland-client = "0.31.5"
+wayland-scanner = "0.31.4"
