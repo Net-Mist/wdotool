@@ -57,6 +57,22 @@ impl Wdotool {
         Ok(())
     }
 
+    #[pyo3()]
+    pub fn left_down(
+        &mut self,
+    ) -> anyhow::Result<()> {
+        self.internal.left_down()?;
+        Ok(())
+    }
+
+    #[pyo3()]
+    pub fn left_up(
+        &mut self,
+    ) -> anyhow::Result<()> {
+        self.internal.left_up()?;
+        Ok(())
+    }
+
     #[pyo3(signature = (duration_ms, duration_ms_max=None))]
     pub fn right_click(
         &mut self,
@@ -69,6 +85,22 @@ impl Wdotool {
         };
 
         self.internal.right_click(duration_ms)?;
+        Ok(())
+    }
+
+    #[pyo3()]
+    pub fn right_down(
+        &mut self,
+    ) -> anyhow::Result<()> {
+        self.internal.right_down()?;
+        Ok(())
+    }
+
+    #[pyo3()]
+    pub fn right_up(
+        &mut self,
+    ) -> anyhow::Result<()> {
+        self.internal.right_up()?;
         Ok(())
     }
 
@@ -85,6 +117,24 @@ impl Wdotool {
         };
 
         self.internal.key_press(key, duration_ms)?;
+        Ok(())
+    }
+
+    #[pyo3(signature = (key))]
+    pub fn key_down(
+        &mut self,
+        key: u32,
+    ) -> anyhow::Result<()> {
+        self.internal.key_down(key)?;
+        Ok(())
+    }
+
+    #[pyo3(signature = (key))]
+    pub fn key_up(
+        &mut self,
+        key: u32,
+    ) -> anyhow::Result<()> {
+        self.internal.key_up(key)?;
         Ok(())
     }
 

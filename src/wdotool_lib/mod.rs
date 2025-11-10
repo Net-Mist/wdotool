@@ -143,4 +143,46 @@ impl Wdotool {
 
         Ok(())
     }
+
+    pub fn key_down(&mut self, key: u32) -> Result<()> {
+        self.keyboard.key(0, key, 1);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+
+        Ok(())
+    }
+
+    pub fn key_up(&mut self, key: u32) -> Result<()> {
+        self.keyboard.key(0, key, 0);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+
+        Ok(())
+    }
+
+    pub fn left_up(&mut self) -> Result<()> {
+        self.pointer
+            .button(0, 272, wl_pointer::ButtonState::Released);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+        Ok(())
+    }
+
+    pub fn left_down(&mut self) -> Result<()> {
+        self.pointer
+            .button(0, 272, wl_pointer::ButtonState::Pressed);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+        Ok(())
+    }
+
+    pub fn right_up(&mut self) -> Result<()> {
+        self.pointer
+            .button(0, 273, wl_pointer::ButtonState::Released);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+        Ok(())
+    }
+
+    pub fn right_down(&mut self) -> Result<()> {
+        self.pointer
+            .button(0, 273, wl_pointer::ButtonState::Pressed);
+        self.event_queue.roundtrip(&mut self.app_data)?;
+        Ok(())
+    }
 }
