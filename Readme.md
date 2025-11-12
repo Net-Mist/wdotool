@@ -48,6 +48,10 @@ Your Wayland compositor need to support 3 protocols:
 
 This solution has been developped under `Hyprland`, but according to the compatibility lists, should also work under `Sway` and `Mir`
 
+## Supported version
+
+This package follows [NEP 29](https://numpy.org/neps/nep-0029-deprecation_policy.html) and supports Python versions 3.11+ and Numpy versions 2.0+ 
+
 ## Special Thanks
 - [wtype](https://github.com/atx/wtype) for showing how to do stuff in C
 - [wev](https://github.com/jwrdegoede/wev) to have a look at client-side wayland events
