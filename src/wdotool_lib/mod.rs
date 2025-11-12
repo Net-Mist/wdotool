@@ -14,6 +14,10 @@ use virtual_keyboard::zwp_virtual_keyboard_v1::ZwpVirtualKeyboardV1;
 use virtual_pointer::zwlr_virtual_pointer_v1::ZwlrVirtualPointerV1;
 use wayland_client::{protocol::wl_pointer, EventQueue, QueueHandle};
 
+/// Represents a value that can either be a single unsigned integer or a range of unsigned integers.
+/// If a single value is provided, it will be used directly. If a range is provided, a value will be
+/// sampled from a normal distribution with the mean being the midpoint of the range and the standard
+/// deviation being half the range. The sampled value will be clamped to the bounds of the range.
 pub enum UIntValue {
     UInt(u32),
     UIntRange(u32, u32),
