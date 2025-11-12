@@ -92,8 +92,8 @@ impl Wdotool {
     pub fn screenshot(&mut self, screen_name: Option<&str>) -> anyhow::Result<Py<PyArray3<u8>>> {
         let screenshot = self.internal.screenshot(screen_name)?;
 
-        Python::with_gil(|py| {
-            let a = PyArray3::from_owned_array_bound(py, screenshot).unbind();
+        Python::attach(|py| {
+            let a = PyArray3::from_owned_array(py, screenshot).unbind();
             Ok(a)
         })
     }
