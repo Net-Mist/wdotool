@@ -1,6 +1,6 @@
 use std::{collections::HashMap, os::fd::OwnedFd};
 
-use log::info;
+use log::{info, warn};
 use wayland_client::{
     protocol::{
         wl_buffer,
@@ -25,7 +25,7 @@ pub struct Keymap {
 }
 
 pub struct Buffer {
-    pub format: WEnum<Format>,
+    pub format: Format,
     pub width: u32,
     pub height: u32,
     pub stride: u32,
@@ -185,6 +185,13 @@ impl Dispatch<zwlr_screencopy_frame_v1::ZwlrScreencopyFrameV1, ()> for AppData {
             stride,
         } = event
         {
+            let format = match format {
+                WEnum::Value(f) => f,
+                WEnum::Unknown(_) => {
+                    warn!("Unknown buffer format received: {:?}", format);
+                    Format::Xrgb8888
+                }
+            };
             state.screencopy.as_mut().unwrap().buffer = Some(Buffer {
                 format,
                 width,
