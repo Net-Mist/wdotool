@@ -46,7 +46,7 @@ Your Wayland compositor need to support 3 protocols:
 - [wlr-screencopy-unstable-v1](https://wayland.app/protocols/wlr-screencopy-unstable-v1), version 3
 - [wlr-virtual-pointer-unstable-v1](https://wayland.app/protocols/wlr-virtual-pointer-unstable-v1) version 2
 
-This solution has been developped under `Hyprland`, but according to the compatibility lists, should also work under `Sway` and `Mir`
+This solution has been tested under `Hyprland` and `Cage`, but according to the compatibility lists, should also work under `Sway` and `Mir`
 
 ## Supported version
 

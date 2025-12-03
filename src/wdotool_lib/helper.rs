@@ -9,11 +9,9 @@ use std::{
 };
 
 use anyhow::{Context, Result};
+use log::{info, warn};
 use ndarray::{Array, Array3};
-use wayland_client::{
-    protocol::{wl_keyboard, wl_shm},
-    Connection, EventQueue, QueueHandle,
-};
+use wayland_client::{protocol::wl_keyboard, Connection, EventQueue, QueueHandle};
 
 use crate::wdotool_lib::app_data::Screencopy;
 
@@ -66,6 +64,10 @@ pub fn setup_virtual_keyboard(
         (),
     );
     // upload_keymap we got from the current keyboard
+    while app_data.keymap.is_none() {
+        warn!("waiting for keymap to be set");
+        event_queue.blocking_dispatch(&mut app_data).unwrap();
+    }
     let keymap = app_data.keymap.unwrap();
     app_data.keymap = None;
 
@@ -110,10 +112,14 @@ pub fn screenshot(
         .context("no screencopy manager")?
         .capture_output(0, output, qh, ());
     app_data.screencopy = Some(Screencopy::new(screencopy_frame));
-    event_queue.roundtrip(app_data)?;
+    event_queue
+        .roundtrip(app_data)
+        .context("issue in event queue roundtrip")?;
 
     while !app_data.screencopy_buffer_set() {
-        event_queue.blocking_dispatch(app_data)?;
+        event_queue
+            .blocking_dispatch(app_data)
+            .context("issue in blocking dispatch")?;
     }
 
     let buffer_param = app_data
@@ -127,6 +133,7 @@ pub fn screenshot(
     let width = buffer_param.width as i32;
     let height = buffer_param.height as i32;
     let stride = buffer_param.stride as i32;
+    let format = buffer_param.format;
 
     let mut file = create_shm_file(buffer_param.size())?;
     let fd = file.as_fd();
@@ -139,22 +146,30 @@ pub fn screenshot(
 
     event_queue.roundtrip(app_data)?;
 
-    let buffer =
-        wl_shm_pool.create_buffer(0, width, height, stride, wl_shm::Format::Xrgb8888, qh, ());
-    event_queue.roundtrip(app_data)?;
+    info!(
+        "Creating buffer for screenshot: {}x{}, stride {}",
+        width, height, stride
+    );
+
+    let buffer = wl_shm_pool.create_buffer(0, width, height, stride, format, qh, ());
+    event_queue
+        .roundtrip(app_data)
+        .context("error in roundtrip post buffer creation")?;
 
     app_data.screencopy.as_ref().unwrap().frame.copy(&buffer);
     app_data.screencopy_in_progress = true;
 
     while app_data.screencopy_in_progress {
-        event_queue.blocking_dispatch(app_data)?;
+        event_queue
+            .blocking_dispatch(app_data)
+            .context("error in blocking dispatch of screencopy to buffer")?;
     }
 
     app_data.screencopy.as_ref().unwrap().frame.destroy();
     app_data.screencopy = None;
 
     let mut buf = vec![0u8; height as usize * width as usize * 4];
-    file.read_exact(&mut buf[..])?;
+    file.read_exact(&mut buf[..]).context("can't read buffer")?;
     let array = Array::from_vec(buf)
         .to_shape((height as usize, width as usize, 4))?
         .to_owned();
